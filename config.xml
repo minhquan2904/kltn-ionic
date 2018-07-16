@@ -81,4 +81,10 @@
     <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
     <plugin name="cordova-plugin-ionic-webview" spec="1.1.19" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="2.0.5" />
+    <allow-navigation href="http://10.187.131.85:8101" />
+    <plugin name="cordova-plugin-mauron85-background-geolocation" spec="^2.3.5">
+        <variable name="ALWAYS_USAGE_DESCRIPTION" value="This app always requires location tracking" />
+    </plugin>
+    <engine name="ios" spec="4.5.4" />
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
 </widget>

@@ -1,14 +1,24 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
+  <ion-toolbar>
+    <ion-buttons start>
+      <button ion-button icon-only color="royal" (click)="demo()">
+        <ion-icon name="bicycle"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Geolocation</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="royal" (click)="start()" > 
+        <ion-icon name="locate"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-buttons end>
+      <button ion-button icon-only color="royal" (click)="stop()" >
+        <ion-icon name="hand"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+  <div id="map" class="map"></div>
 </ion-content>
