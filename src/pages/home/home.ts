@@ -48,7 +48,11 @@ export class HomePage {
   
   // marker
   positionFeature = new ol.Feature();
-  
+  // line string
+  source = new ol.source.Vector({});
+  layerLines = new ol.layer.Vector({
+    source: this.source
+  });
   constructor(public navCtrl: NavController, 
     public locationTracker: LocationTrackerService) {
 
@@ -62,7 +66,7 @@ export class HomePage {
    this.map = new ol.Map({
       layers: [new ol.layer.Tile({ source: new ol.source.XYZ({
         url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      }) }), this.vectorLayer],
+      }) }), this.vectorLayer, this.layerLines],
       target: document.getElementById('map'),
       view: this.view,
       controls: ol.control.defaults().extend([
@@ -178,11 +182,12 @@ export class HomePage {
     if(index > this.markerArray.length -1 ) {
       this.sub.unsubscribe();
     } else {
-      this.view.setZoom(13);
 
       this.vectorSource.addFeature(this.markerArray[index]);
       let coordinate = this.markerArray[index].getGeometry().getCoordinates()
       this.view.setCenter(coordinate);
+      this.view.setZoom(14);
+
 
       this.startPoint = this.endPoint;
       this.endPoint = coordinate;
@@ -196,18 +201,16 @@ export class HomePage {
   }
 
   public drawLine(startPoint, endPoint) {
-    console.log('drwa line');
+    console.log('draw line');
     let coordinates = [startPoint , endPoint ]; 
-    let layerLines = new ol.layer.Vector({
-      source: new ol.source.Vector({
-          features: [new ol.Feature({
-              geometry: new ol.geom.LineString(coordinates),
-              name: 'Line'
-          })]
-      }),
-    });
-    this.map.addLayer(layerLines);
-    // this.vectorLayer.addFeature([new ol.source.Vector(new ol.geom.LineString([startPoint, endPoint]))])
+    
+    let feature = new ol.Feature({
+      geometry: new ol.geom.LineString(coordinates),
+      name: 'Line'
+    })
+
+    this.source.addFeature(feature);
+    
   }
   displayFeatureInfo(e) {
     let pixel = e.pixel;
