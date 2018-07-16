@@ -62,13 +62,14 @@ export class LocationTrackerService {
   
       this.watch = this.geolocation.watchPosition(options).filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
         console.log(position);
-  
+        let positionFeature = new ol.Feature();
+        let coordinate = ol.proj.fromLonLat([position.coords.longitude,position.coords.latitude]);
+        positionFeature.setGeometry(new ol.geom.Point(coordinate));
+        vectorSource.addFeature(positionFeature);
+        
         this.zone.run(() => {
           //add marker to source
-          // let positionFeature = new ol.Feature();
-          // let coordinate = ol.proj.fromLonLat([position.coords.longitude,position.coords.latitude]);
-          // positionFeature.setGeometry(new ol.geom.Point(coordinate));
-          // vectorSource.addFeature(positionFeature);
+          
           
           //default
           this.lat = position.coords.latitude;
