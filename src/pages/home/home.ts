@@ -21,6 +21,8 @@ export class HomePage {
   public markerArray: Array<any> = [];
   public index: any = 0; // index to loop demo
   sub: Subscription;
+  startPoint: any;
+  endPoint: any;
   // marker style
   iconStyle = new ol.style.Style({
     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */({
@@ -73,8 +75,70 @@ export class HomePage {
         new ol.interaction.DragRotateAndZoom()
         ])
     });
+    var container = document.getElementById('popup');
+    var content = document.getElementById('popup-content');
+    var closer = document.getElementById('popup-closer');
     
-  }
+    /**
+     * Create an overlay to anchor the popup to the map.
+     */
+    var overlay = new ol.Overlay({
+      element: container
+    });
+
+    /**
+     * Add a click handler to hide the popup.
+     * @return {boolean} Don't follow the href.
+     */
+    closer.onclick = function() {
+      overlay.setPosition(undefined);
+      closer.blur();
+      return false;
+    };
+
+    this.map.addOverlay(overlay);
+    /**
+     * Add a click handler to the map to render the popup.
+     */
+    this.map.on('click', (evt) => {
+      let features = [];
+      try {
+        this.map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
+          features.push(feature);
+        });
+        console.log(features[0].getProperties());
+        let name = features[0].getProperties().name;
+        var coordinate = features[0].getGeometry().getCoordinates();
+        var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+            coordinate, 'EPSG:3857', 'EPSG:4326'));
+  
+        content.innerHTML = '<p>You clicked <b>' + name + '</b>:</p><code>' + hdms +
+            '</code>';
+        overlay.setPosition(coordinate);
+      } catch (error) {
+        
+      }
+      
+     
+      
+    });
+    // this.map.addOverlay(popup);
+    // this.map.on('click', (evt) => {
+    //   let features = [];
+    //   this.map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+    //     features.push(feature);
+    //   });
+
+    //   var element = popup.getElement();
+    //   var coordinate = evt.coordinate;
+      
+    //   element.popover('destroy');
+
+    //   popup.setPosition(features[0].getGeometry().getCoordinates());
+
+
+    // });
+  } 
   public start() {
     this.locationTracker.startTracking(this.vectorSource, this.view);
     // let coordinate = ol.proj.fromLonLat([this.locationTracker.lng,this.locationTracker.lat]);
@@ -95,8 +159,10 @@ export class HomePage {
     Object.keys(appResource.location).forEach((key) =>  {
       
       let coordinate = ol.proj.fromLonLat([appResource.location[key].lng,appResource.location[key].lat]);
-      let positionFeature = new ol.Feature();
-      positionFeature.setGeometry(new ol.geom.Point(coordinate));
+      let positionFeature = new ol.Feature({
+        name: 'Marker'
+      });
+      positionFeature.setGeometry(new ol.geom.Point(coordinate)); 
       this.markerArray.push(positionFeature);
     });
     this.sub = Observable.interval(5000).subscribe((val) => {
@@ -112,11 +178,44 @@ export class HomePage {
     if(index > this.markerArray.length -1 ) {
       this.sub.unsubscribe();
     } else {
-      this.view.setZoom(15);
+      this.view.setZoom(13);
 
       this.vectorSource.addFeature(this.markerArray[index]);
-      this.view.setCenter(this.markerArray[index].getGeometry().getCoordinates());
+      let coordinate = this.markerArray[index].getGeometry().getCoordinates()
+      this.view.setCenter(coordinate);
+
+      this.startPoint = this.endPoint;
+      this.endPoint = coordinate;
+      
+      if(this.startPoint !== undefined){
+        this.drawLine(this.startPoint, this.endPoint);
+      }
+      
     }
     //console.log(this.markerArray.length)
+  }
+
+  public drawLine(startPoint, endPoint) {
+    console.log('drwa line');
+    let coordinates = [startPoint , endPoint ]; 
+    let layerLines = new ol.layer.Vector({
+      source: new ol.source.Vector({
+          features: [new ol.Feature({
+              geometry: new ol.geom.LineString(coordinates),
+              name: 'Line'
+          })]
+      }),
+    });
+    this.map.addLayer(layerLines);
+    // this.vectorLayer.addFeature([new ol.source.Vector(new ol.geom.LineString([startPoint, endPoint]))])
+  }
+  displayFeatureInfo(e) {
+    let pixel = e.pixel;
+    let features = [];
+    this.map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+      features.push(feature)
+    });
+    var target = features[0];
+    console.log(target);
   }
 }

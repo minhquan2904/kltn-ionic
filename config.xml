@@ -85,6 +85,6 @@
     <plugin name="cordova-plugin-mauron85-background-geolocation" spec="^2.3.5">
         <variable name="ALWAYS_USAGE_DESCRIPTION" value="This app always requires location tracking" />
     </plugin>
-    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
     <engine name="ios" spec="4.5.4" />
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
 </widget>

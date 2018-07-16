@@ -42,7 +42,7 @@ export class LocationTrackerService {
           let coordinate = ol.proj.fromLonLat([location.longitude,location.latitude]);
           positionFeature.setGeometry(new ol.geom.Point(coordinate));
           vectorSource.addFeature(positionFeature);
-          view.setZoom(15);
+          view.setZoom(13);
           view.setCenter(coordinate);
           //default
           this.lat = location.latitude;
@@ -66,7 +66,7 @@ export class LocationTrackerService {
         let coordinate = ol.proj.fromLonLat([position.coords.longitude,position.coords.latitude]);
         positionFeature.setGeometry(new ol.geom.Point(coordinate));
         vectorSource.addFeature(positionFeature);
-        
+        console.log('afds');
         this.zone.run(() => {
           //add marker to source
           
